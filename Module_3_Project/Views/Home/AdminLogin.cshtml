@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "";
+}
+
+<center>
+    <form asp-controller="Home" asp-action="AdminLogin" method="post">
+        Username: <input type="text" name="txtUname" required/>
+        <br>
+        <br />
+        Password: <input type="password" name="txtPass" required/>
+        <br>
+        <br />
+        <button type="submit" name="btnlogin">Login</button>
+    </form>
+    <form asp-controller="Home" asp-action="Privacy" method="post">
+        <button type="submit" name="button">Just Proceed</button>
+    </form>
+</center>

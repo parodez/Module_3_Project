@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "All Student Information";
+    Layout = "";
+}
+<html>
+<head>
+
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Year Level</th>
+            <th>Course</th>
+            <th>Units Passed</th>
+            <th>Units Left</th>
+        </tr>
+        @foreach (Student students in Model)
+        {
+            <tr>
+                <td>@students.stud_id</td>
+                <td>@students.name</td>
+                <td>@students.age</td>
+                <td>@students.year_level</td>
+                <td>@students.course</td>
+                <td>@students.units_passed</td>
+                <td>@students.units_left</td>
+            </tr>
+        }
+        </table>
+    </body>
+</html>

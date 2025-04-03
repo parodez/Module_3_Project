@@ -12,7 +12,14 @@
         <button type="submit" id="button" name="button">View Student Information</button>
     </form>
     <form asp-controller="Home" asp-action="ChangeCourseLoad" method="post">
-        <button type="submit" id="course" name="button">Change Course Load</button>
+        <label for="stud_id">Choose Student</label>
+        <select name="stud_id" id="stud_id">
+            @foreach (Student students in Model.students)
+            {
+                <option value=@students.stud_id>@students.stud_id</option>
+            }
+        </select>
+        <button type="submit" id="course" name="course">Change Course Load</button>
     </form>
     <form asp-controller="Home" asp-action="AdminView" method="post">
         <label for="term_id">Choose Term</label>

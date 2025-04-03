@@ -260,9 +260,41 @@ namespace Module_3_Project.Controllers
 
             return View(student);
         }
-        public IActionResult ChangeCourseLoad()
+        public IActionResult ChangeCourseLoad(string stud_id)
         {
-            return View();
+            Student student = new Student();
+
+            string constr = this.Configuration.GetConnectionString("DefaultConnection");
+            string sql;
+
+            sql = "SELECT * FROM student_info WHERE stud_id = '" + stud_id + "';";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                student.stud_id = sdr["stud_id"].ToString();
+                                student.name = sdr["name"].ToString();
+                                student.age = Int32.Parse(sdr["age"].ToString());
+                                student.year_level = Int32.Parse(sdr["year_level"].ToString());
+                                student.course = sdr["course"].ToString();
+                                student.units_passed = Int32.Parse(sdr["units_passed"].ToString());
+                                student.units_left = Int32.Parse(sdr["units_left"].ToString());
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+
+            return View(student);
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

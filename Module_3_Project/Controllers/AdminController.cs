@@ -537,5 +537,62 @@ namespace Module_3_Project.Controllers
 
             return RedirectToAction("CourseView", "Admin", new { message = "Course Deleted Successfully" });
         }//Course Delete - END
+        public IActionResult AllStudentView(string message = "")
+        {
+            string constr = this.Configuration.GetConnectionString("DefaultConnection");
+            string sql;
+
+            StudentViewModel studentViewInfo = new StudentViewModel();
+            studentViewInfo.students = new List<Student>();
+            studentViewInfo.message = message;
+
+            //Get all Courses
+            sql = "SELECT * FROM student_info;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                studentViewInfo.students.Add(new Student
+                                {
+                                    stud_id = sdr["stud_id"].ToString(),
+                                    name = sdr["name"].ToString(),
+                                    age = Int32.Parse(sdr["age"].ToString()),
+                                    year_level = Int32.Parse(sdr["year_level"].ToString()),
+                                    course = sdr["course"].ToString(),
+                                    units_passed = Int32.Parse(sdr["units_passed"].ToString()),
+                                    units_left = Int32.Parse(sdr["units_left"].ToString())
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get all Courses - END
+
+            return View(studentViewInfo);
+        }//AllStudentView - END
+        public IActionResult StudentDML(string btn_student_dml, string stud_id)
+        {
+            if (btn_student_dml == "add")
+            {
+                return RedirectToAction("StudentAdd", "Admin");
+            }
+            else if (btn_student_dml == "edit")
+            {
+                return RedirectToAction("CourseEdit", "Admin", new { stud_id });
+            }
+            else
+            {
+                return RedirectToAction("CourseDelete", "Admin", new { stud_id });
+            }
+        }//StudentDML - END
     }
 }

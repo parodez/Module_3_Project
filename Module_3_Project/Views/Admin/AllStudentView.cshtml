@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Student Dashboard";
+
+}
+<html>
+<head>
+
+</head>
+<body>
+    <h1>Admin Dashboard -> Student Dashboard</h1>
+    <form asp-controller="Admin" asp-action="AdminView" method="post">
+        <button type="submit" name="btnBack">Back</button>
+    </form>
+    <h2>@Model.message</h2>
+    <form id="form_student_add" asp-controller="Admin" asp-action="StudentDML" method="post"></form>
+        <button form="form_student_add" type="submit" id="btn_student_dml" name="btn_student_dml" value="add">Add Student</button>
+    <form id="form_student_dml" asp-controller="Admin" asp-action="StudentDML" method="post">
+        <select id="stud_id" name="stud_id">
+            @foreach (Student student in Model.students)
+            {
+                <option value=@student.stud_id>@student.stud_id, @student.name</option>
+            }
+        </select>
+        <button form="form_student_dml" type="submit" id="btn_student_dml" name="btn_student_dml" value="edit">Edit Student</button>
+        <button form="form_student_dml" type="submit" id="btn_student_dml" name="btn_student_dml" value="delete">Delete Student</button>
+    </form>
+
+    <table>
+        <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Year Level</th>
+            <th>Course</th>
+            <th>Units Passed</th>
+            <th>Units Left</th>
+        </tr>
+        @foreach (Student student in Model.students)
+        {
+            <tr>
+                <td>@student.stud_id</td>
+                <td>@student.name</td>
+                <td>@student.age</td>
+                <td>@student.year_level</td>
+                <td>@student.course</td>
+                <td>@student.units_passed</td>
+                <td>@student.units_left</td>
+            </tr>
+        }
+    </table>
+</body>
+</html>

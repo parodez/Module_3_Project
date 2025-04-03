@@ -250,7 +250,7 @@ namespace Module_3_Project.Controllers
             if (sessionname == null)
             {
                 Debug.WriteLine("wala ng session data (AllStudentInfo)");
-                return RedirectToAction("MainPage", "Home");
+                return RedirectToAction("Login", "Home");
             }
             else
             {
@@ -414,7 +414,7 @@ namespace Module_3_Project.Controllers
             if (sessionname == null)
             {
                 Debug.WriteLine("wala ng session data (StudentView)");
-                return RedirectToAction("MainPage", "Home");
+                return RedirectToAction("Login", "Home");
             }
             else
             {

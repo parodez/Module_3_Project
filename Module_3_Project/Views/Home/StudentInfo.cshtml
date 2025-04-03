@@ -1,0 +1,92 @@
+﻿@{
+    ViewData["Title"] = "All Student Information";
+
+}
+<html>
+<head>
+
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Year Level</th>
+            <th>Course</th>
+            <th>Units Passed</th>
+            <th>Units Left</th>
+        </tr>
+        <tr>
+            <td>@Model.student.stud_id</td>
+            <td>@Model.student.name</td>
+            <td>@Model.student.age</td>
+            <td>@Model.student.year_level</td>
+            <td>@Model.student.course</td>
+            <td>@Model.student.units_passed</td>
+            <td>@Model.student.units_left</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th>Enrollment ID</th>
+            <th>Academic Year</th>
+            <th>Term</th>
+            <th>Course Code</th>
+            <th>Course Name</th>
+        </tr>
+        @foreach (Enrolled enrollment in Model.enrollments)
+        {
+            <tr>
+                <td>@enrollment.enrollment_id</td>
+                @foreach (Terms terms in Model.terms)
+                {
+                    @if (enrollment.term_id == terms.term_id)
+                    {
+                        <td>@terms.start_year</td>
+                        <td>@terms.term</td>
+                        break;
+                    }
+                }
+                @foreach (Course course in Model.courses)
+                {
+                    @if (enrollment.CourseID == course.CourseID)
+                    {
+                        <td>@course.CourseCode</td>
+                        <td>@course.CourseName</td>
+                        break;
+                    }
+                }
+            </tr>
+        }
+    </table>
+
+    <table>
+        <tr>
+            <th>Grade ID</th>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Term ID</th>
+            <th>Grade Value</th>
+        </tr>
+        @foreach (Grade grade in Model.grades)
+        {
+            <tr>
+                <td>@grade.GradeID</td>
+                @foreach (Course course in Model.courses)
+                {
+                    @if (grade.CourseID == course.CourseID)
+                    {
+                        <td>@course.CourseCode</td>
+                        <td>@course.CourseName</td>
+                        break;
+                    }
+                }
+                <td>@grade.Term</td>
+                <td>@grade.GradeValue</td>
+            </tr>
+        }
+    </table>
+    </body>
+</html>

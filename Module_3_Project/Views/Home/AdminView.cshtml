@@ -8,7 +8,14 @@
 </head>
 <body>
     <h1>Welcome, Admin</h1>
-    <form asp-controller="Home" asp-action="AllStudentInfo" method="post">
+    <form asp-controller="Home" asp-action="StudentInfo" method="post">
+        <label for="term_id">Choose Student</label>
+        <select name="stud_id" id="stud_id">
+            @foreach (Student student in Model.students)
+            {
+                <option value=@student.stud_id>@student.stud_id, @student.name</option>
+            }
+        </select>
         <button type="submit" id="button" name="button">View Student Information</button>
     </form>
     <form asp-controller="Home" asp-action="AdminView" method="post">
@@ -22,9 +29,10 @@
         <button type="submit" id="submit" name="submit">View Term</button>
     </form>
 
-    <center>@Model.term_id</center>
-
-    <table>
+    <br />
+    <br />
+    <label for="enrollments">Showing Currently Enrolled in @Model.term_id</label>
+    <table name="enrollments">
         <tr>
             <th>Enrollment ID</th>
             <th>Student ID</th>

@@ -7,8 +7,15 @@
 
 </head>
 <body>
-    <h1>Welcome, Admin</h1>
-    <form asp-controller="Home" asp-action="StudentInfo" method="post">
+    <h1>Admin Dashboard</h1>
+    <form asp-controller="Home" asp-action="Login" method="post">
+        <button type="submit" name="btnLogout">Logout</button>
+    </form>
+    <h2>@Model.message</h2>
+    <form asp-controller="Admin" asp-action="CourseView" method="post">
+        <button type="submit" id="course_view" name="course_view">View Courses</button>
+    </form>
+    <form asp-controller="Admin" asp-action="StudentInfo" method="post">
         <label for="term_id">Choose Student</label>
         <select name="stud_id" id="stud_id">
             @foreach (Student student in Model.students)
@@ -18,7 +25,7 @@
         </select>
         <button type="submit" id="button" name="button">View Student Information</button>
     </form>
-    <form asp-controller="Home" asp-action="AdminView" method="post">
+    <form asp-controller="Admin" asp-action="AdminView" method="post">
         <label for="term_id">Choose Term</label>
         <select name="term_id" id="term_id">
             @foreach (Terms terms in Model.terms)

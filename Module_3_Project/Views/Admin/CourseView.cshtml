@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Course Dashboard";
+
+}
+<html>
+    <head>
+
+    </head>
+    <body>
+        <h1>Admin Dashboard -> Course Dashboard</h1>
+        <form asp-controller="Admin" asp-action="AdminView" method="post">
+            <button type="submit" name="btnBack">Back</button>
+        </form>
+        <h2>@Model.message</h2>
+        <form id="form_course_add" asp-controller="Admin" asp-action="CourseDML" method="post"></form>
+        <button form="form_course_add" type="submit" id="btn_course_dml" name="btn_course_dml" value="add">Add Course</button>
+        <form id="form_course_dml" asp-controller="Admin" asp-action="CourseDML" method="post">
+            <select id="CourseID" name="CourseID">
+                @foreach (Course course in Model.courses)
+                {
+                    <option value=@course.CourseID>@course.CourseCode</option>
+                }
+            </select>
+            <button form="form_course_dml" type="submit" id="btn_course_dml" name="btn_course_dml" value="edit">Edit Course</button>
+            <button form="form_course_dml" type="submit" id="btn_course_dml" name="btn_course_dml" value="delete">Delete Course</button>
+        </form>
+
+        <table>
+            <tr>
+                <th>Course ID</th>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Units Worth</th>
+            </tr>
+            @foreach (Course course in Model.courses)
+            {
+                <tr>
+                    <td>@course.CourseID</td>
+                    <td>@course.CourseCode</td>
+                    <td>@course.CourseName</td>
+                    <td>@course.UnitsWorth</td>
+                </tr>
+            }
+        </table>
+    </body>
+</html>

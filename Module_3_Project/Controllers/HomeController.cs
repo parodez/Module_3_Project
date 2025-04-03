@@ -260,6 +260,10 @@ namespace Module_3_Project.Controllers
 
             return View(student);
         }
+        public IActionResult ChangeCourseLoad()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

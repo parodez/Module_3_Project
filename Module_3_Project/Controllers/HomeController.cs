@@ -6,6 +6,8 @@ using Module_3_Project.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Http;
 using System;
+using static Mysqlx.Expect.Open.Types;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Module_3_Project.Controllers
 {
@@ -109,6 +111,8 @@ namespace Module_3_Project.Controllers
                     // Creation of session for Student
                     HttpContext.Session.SetString("MySession", "StudentLoggedIn");
 
+                    // Storing stud_id in session
+                    HttpContext.Session.SetString("LogedInUserId", txtUname);
                     return RedirectToAction("StudentView", "Home", new { stud_id = txtUname });
                 }
             }
@@ -423,6 +427,12 @@ namespace Module_3_Project.Controllers
 
             Student student = new Student();
 
+
+            student.grades = new List<Grade>();
+            student.courses = new List<Course>();
+            student.enrollments = new List<Enrolled>();
+            student.terms = new List<Terms>();
+
             string constr = this.Configuration.GetConnectionString("DefaultConnection");
             string sql;
 
@@ -453,8 +463,122 @@ namespace Module_3_Project.Controllers
                 }
             }
 
+            sql = "SELECT * FROM courses;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                student.courses.Add(new Course
+                                {
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString()),
+                                    CourseCode = sdr["CourseCode"].ToString(),
+                                    CourseName = sdr["CourseName"].ToString(),
+                                    UnitsWorth = Int32.Parse(sdr["UnitsWorth"].ToString())
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+
+            //Get Student Grades
+            sql = "SELECT * FROM grades WHERE StudentID = '" + stud_id + "';";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                student.grades.Add(new Grade
+                                {
+                                    GradeID = Int32.Parse(sdr["GradeID"].ToString()),
+                                    StudentID = sdr["StudentID"].ToString(),
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString()),
+                                    Term = Int32.Parse(sdr["Term"].ToString()),
+                                    GradeValue = sdr["GradeValue"].ToString()
+                                }
+                                );
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+
+            //Get Student Enrollment Info
+            sql = "SELECT * FROM enrollments WHERE stud_id = '" + stud_id + "';";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                student.enrollments.Add(new Enrolled
+                                {
+                                    enrollment_id = Int32.Parse(sdr["enrollment_id"].ToString()),
+                                    term_id = sdr["term_id"].ToString(),
+                                    stud_id = sdr["stud_id"].ToString(),
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString())
+                                }
+                                );
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+
+            //Get Terms
+            sql = "SELECT * FROM terms;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                student.terms.Add(new Terms
+                                {
+                                    term_id = sdr["term_id"].ToString(),
+                                    start_year = Int32.Parse(sdr["start_year"].ToString()),
+                                    term = Int32.Parse(sdr["term"].ToString())
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+
             return View(student);
         }
+
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

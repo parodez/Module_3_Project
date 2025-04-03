@@ -1,12 +1,52 @@
 ﻿@{
     ViewData["Title"] = "Student View";
- 
+
 }
 <html>
-    <head>
+<head>
 
-    </head>
-    <body>
-        <label></label>
+</head>
+<body>
+    <div class="sidenav">
+        <p>Welcome, @Model.name!</p>
+        <p>Your Student ID: @Model.stud_id</p>
+        <p>Your Course: @Model.course</p>
+        <p>Year Level: @Model.year_level</p>
+
+        <a asp-action="ChangePassword" class="btn btn-warning">Change Password</a>
+    </div>
+
+    <div>
+        <table>
+            <tr>
+                <th>Grade ID</th>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Term ID</th>
+                <th>Grade Value</th>
+            </tr>
+            @foreach (Grade grade in Model.grades)
+            {
+                <tr>
+                    <td>@grade.GradeID</td>
+                    @foreach (Course course in Model.courses)
+                    {
+                        @if (grade.CourseID == course.CourseID)
+                        {
+                            <td>@course.CourseCode</td>
+                            <td>@course.CourseName</td>
+                            break;
+                        }
+                    }
+                    <td>@grade.Term</td>
+                    <td>@grade.GradeValue</td>
+                </tr>
+            }
+        </table>
+       
+    </div>
+    
+        
+    
     </body>
 </html>

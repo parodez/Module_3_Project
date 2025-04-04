@@ -25,11 +25,11 @@
                 <th>Term ID</th>
                 <th>Grade Value</th>
             </tr>
-            @foreach (Grade grade in Model.grades)
+            @foreach (Grade grade in @Model.grades)
             {
                 <tr>
                     <td>@grade.GradeID</td>
-                    @foreach (Course course in Model.courses)
+                    @foreach (Course course in @Model.courses)
                     {
                         @if (grade.CourseID == course.CourseID)
                         {

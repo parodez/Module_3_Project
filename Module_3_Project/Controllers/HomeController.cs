@@ -425,37 +425,36 @@ namespace Module_3_Project.Controllers
                 Debug.WriteLine(sessionname + " (StudentView)");
             }
 
-            Student student = new Student();
+            StudentView studentView = new StudentView();
 
-
-            student.grades = new List<Grade>();
-            student.courses = new List<Course>();
-            student.enrollments = new List<Enrolled>();
-            student.terms = new List<Terms>();
+            studentView.grades = new List<Grade>();
+            studentView.courses = new List<Course>();
+            studentView.enrollments = new List<Enrolled>();
+            studentView.terms = new List<Terms>();
 
             string constr = this.Configuration.GetConnectionString("DefaultConnection");
             string sql;
 
+            // Fetch Student Personal Info
             sql = "SELECT * FROM student_info WHERE stud_id = '" + stud_id + "';";
             using (MySqlConnection con = new MySqlConnection(constr))
             {
                 using (MySqlCommand cmd = new MySqlCommand(sql, con))
                 {
                     con.Open();
-
                     using (MySqlDataReader sdr = cmd.ExecuteReader())
                     {
                         if (sdr.HasRows)
                         {
                             while (sdr.Read())
                             {
-                                student.stud_id = sdr["stud_id"].ToString();
-                                student.name = sdr["name"].ToString();
-                                student.age = Int32.Parse(sdr["age"].ToString());
-                                student.year_level = Int32.Parse(sdr["year_level"].ToString());
-                                student.course = sdr["course"].ToString();
-                                student.units_passed = Int32.Parse(sdr["units_passed"].ToString());
-                                student.units_left = Int32.Parse(sdr["units_left"].ToString());
+                                studentView.stud_id = sdr["stud_id"].ToString();
+                                studentView.name = sdr["name"].ToString();
+                                studentView.age = Int32.Parse(sdr["age"].ToString());
+                                studentView.year_level = Int32.Parse(sdr["year_level"].ToString());
+                                studentView.course = sdr["course"].ToString();
+                                studentView.units_passed = Int32.Parse(sdr["units_passed"].ToString());
+                                studentView.units_left = Int32.Parse(sdr["units_left"].ToString());
                             }
                         }
                     }
@@ -463,20 +462,20 @@ namespace Module_3_Project.Controllers
                 }
             }
 
+            // Fetch All Courses (remains the same)
             sql = "SELECT * FROM courses;";
             using (MySqlConnection con = new MySqlConnection(constr))
             {
                 using (MySqlCommand cmd = new MySqlCommand(sql, con))
                 {
                     con.Open();
-
                     using (MySqlDataReader sdr = cmd.ExecuteReader())
                     {
                         if (sdr.HasRows)
                         {
                             while (sdr.Read())
                             {
-                                student.courses.Add(new Course
+                                studentView.courses.Add(new Course
                                 {
                                     CourseID = Int32.Parse(sdr["CourseID"].ToString()),
                                     CourseCode = sdr["CourseCode"].ToString(),
@@ -490,7 +489,7 @@ namespace Module_3_Project.Controllers
                 }
             }
 
-            //Get Student Grades
+            // Fetch Student Grades (remains the same)
             sql = "SELECT * FROM grades WHERE StudentID = '" + stud_id + "';";
             using (MySqlConnection con = new MySqlConnection(constr))
             {
@@ -503,69 +502,13 @@ namespace Module_3_Project.Controllers
                         {
                             while (sdr.Read())
                             {
-                                student.grades.Add(new Grade
+                                studentView.grades.Add(new Grade
                                 {
                                     GradeID = Int32.Parse(sdr["GradeID"].ToString()),
                                     StudentID = sdr["StudentID"].ToString(),
                                     CourseID = Int32.Parse(sdr["CourseID"].ToString()),
                                     Term = Int32.Parse(sdr["Term"].ToString()),
                                     GradeValue = sdr["GradeValue"].ToString()
-                                }
-                                );
-                            }
-                        }
-                    }
-                    con.Close();
-                }
-            }
-
-            //Get Student Enrollment Info
-            sql = "SELECT * FROM enrollments WHERE stud_id = '" + stud_id + "';";
-            using (MySqlConnection con = new MySqlConnection(constr))
-            {
-                using (MySqlCommand cmd = new MySqlCommand(sql, con))
-                {
-                    con.Open();
-                    using (MySqlDataReader sdr = cmd.ExecuteReader())
-                    {
-                        if (sdr.HasRows)
-                        {
-                            while (sdr.Read())
-                            {
-                                student.enrollments.Add(new Enrolled
-                                {
-                                    enrollment_id = Int32.Parse(sdr["enrollment_id"].ToString()),
-                                    term_id = sdr["term_id"].ToString(),
-                                    stud_id = sdr["stud_id"].ToString(),
-                                    CourseID = Int32.Parse(sdr["CourseID"].ToString())
-                                }
-                                );
-                            }
-                        }
-                    }
-                    con.Close();
-                }
-            }
-
-            //Get Terms
-            sql = "SELECT * FROM terms;";
-            using (MySqlConnection con = new MySqlConnection(constr))
-            {
-                using (MySqlCommand cmd = new MySqlCommand(sql, con))
-                {
-                    con.Open();
-
-                    using (MySqlDataReader sdr = cmd.ExecuteReader())
-                    {
-                        if (sdr.HasRows)
-                        {
-                            while (sdr.Read())
-                            {
-                                student.terms.Add(new Terms
-                                {
-                                    term_id = sdr["term_id"].ToString(),
-                                    start_year = Int32.Parse(sdr["start_year"].ToString()),
-                                    term = Int32.Parse(sdr["term"].ToString())
                                 });
                             }
                         }
@@ -574,7 +517,7 @@ namespace Module_3_Project.Controllers
                 }
             }
 
-            return View(student);
+            return View(studentView);
         }
 
 

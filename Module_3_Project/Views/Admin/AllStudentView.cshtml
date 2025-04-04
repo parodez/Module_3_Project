@@ -15,7 +15,7 @@
     <form id="form_student_add" asp-controller="Admin" asp-action="StudentDML" method="post"></form>
         <button form="form_student_add" type="submit" id="btn_student_dml" name="btn_student_dml" value="add">Add Student</button>
     <form id="form_student_dml" asp-controller="Admin" asp-action="StudentDML" method="post">
-        <select id="stud_id" name="stud_id">
+        <select id="txtStudID" name="txtStudID">
             @foreach (Student student in Model.students)
             {
                 <option value=@student.stud_id>@student.stud_id, @student.name</option>

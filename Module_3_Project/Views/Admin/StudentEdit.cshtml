@@ -1,0 +1,70 @@
+﻿@{
+	ViewData["Title"] = "Edit Student";
+
+}
+<html>
+<head>
+
+</head>
+<body>
+	<h1>Admin Dashboard -> Edit Student</h1>
+	<form asp-controller="Admin" asp-action="AllStudentView" method="post">
+		<button type="submit" name="btnBack">Back</button>
+	</form>
+	<h2>@Model.message</h2>
+
+	<form asp-controller="Admin" asp-action="StudentEdit" method="post">
+
+		Student ID: <input type="text" name="txtStudID" value="@Model.student.stud_id" readonly />
+
+		<br>
+
+		<br />
+
+		<label>@Model.student.name</label>
+		<br />
+		Name: <input type="text" name="txtName" required />
+
+		<br>
+
+		<br />
+		<label>@Model.student.age</label>
+		<br />
+		Age: <input type="text" name="txtAge" required />
+
+		<br>
+
+		<br />
+		<label>@Model.student.year_level</label>
+		<br />
+		Year Level: <input type="text" name="txtYearLevel" required />
+
+		<br>
+
+		<br />
+		<label>@Model.student.course</label>
+		<br />
+		Course: <input type="text" name="txtCourse" required />
+
+		<br>
+
+		<br />
+		<label>@Model.student.units_passed</label>
+		<br />
+		Units Passed: <input type="text" name="txtUnitsPassed" required />
+
+		<br>
+
+		<br />
+		<label>@Model.student.units_left</label>
+		<br />
+		Units Left: <input type="text" name="txtUnitsLeft" required />
+
+		<br>
+
+		<br />
+
+		<button type="submit" name="btnSubmit">Edit Student</button>
+	</form>
+</body>
+</html>

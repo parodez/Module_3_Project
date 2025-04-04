@@ -579,7 +579,7 @@ namespace Module_3_Project.Controllers
 
             return View(studentViewInfo);
         }//AllStudentView - END
-        public IActionResult StudentDML(string btn_student_dml, string stud_id)
+        public IActionResult StudentDML(string btn_student_dml, string txtStudID)
         {
             if (btn_student_dml == "add")
             {
@@ -587,11 +587,11 @@ namespace Module_3_Project.Controllers
             }
             else if (btn_student_dml == "edit")
             {
-                return RedirectToAction("CourseEdit", "Admin", new { stud_id });
+                return RedirectToAction("StudentEdit", "Admin", new { txtStudID });
             }
             else
             {
-                return RedirectToAction("CourseDelete", "Admin", new { stud_id });
+                return RedirectToAction("StudentDelete", "Admin", new { txtStudID });
             }
         }//StudentDML - END
         public IActionResult StudentAdd(string txtStudID = "", string txtName = "", string txtAge = "", string txtYearLevel = "", string txtCourse = "", string txtUnitsPassed = "", string txtUnitsLeft = "")
@@ -648,10 +648,87 @@ namespace Module_3_Project.Controllers
                     return RedirectToAction("AllStudentView", "Admin", new { message = "Student Added Successfully" });
                     //Go back to Admin Dashboard with transaction feedback - END
                 }
-                //Runs if Course to be added does not exist - END
+                //Runs if Student to be added does not exist - END
             }
-
             return View(studentAddInfo);
         }//StudentADD - END
+        public IActionResult StudentEdit(string txtStudID = "", string txtName = "", string txtAge = "", string txtYearLevel = "", string txtCourse = "", string txtUnitsPassed = "", string txtUnitsLeft = "")
+        {
+            StudentAddModel studentInfo = new StudentAddModel();
+            studentInfo.student = new Student();
+            studentInfo.message = "";
+
+            string constr = this.Configuration.GetConnectionString("DefaultConnection");
+            string sql;
+
+            //Runs if user pressed the edit button
+            if (txtName != "")
+            {
+                //Edits Student database
+                sql = "UPDATE student_info SET name='" + txtName + "',age='" + txtAge + "',year_level='" + txtYearLevel + "',course='" + txtCourse + "',units_passed='" + txtUnitsPassed + "',units_left='" + txtUnitsLeft + "' WHERE stud_id='" + txtStudID + "';";
+                using (MySqlConnection con = new MySqlConnection(constr))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                    {
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
+                studentInfo.message = "Course Edited Successfully";
+                //Edits Student database - END
+
+                return RedirectToAction("AllStudentView", "Admin", new { message = studentInfo.message });
+            }
+            //Runs if user pressed the edit button - END
+            //Runs if first time loading
+            else
+            {
+                //Gets Student data
+                sql = "SELECT * FROM student_info WHERE stud_id='" + txtStudID + "';";
+                using (MySqlConnection con = new MySqlConnection(constr))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                    {
+                        con.Open();
+                        using (MySqlDataReader sdr = cmd.ExecuteReader())
+                        {
+                            while (sdr.Read())
+                            {
+                                studentInfo.student.stud_id = sdr["stud_id"].ToString();
+                                studentInfo.student.name = sdr["name"].ToString();
+                                studentInfo.student.age = Int32.Parse(sdr["age"].ToString());
+                                studentInfo.student.year_level = Int32.Parse(sdr["year_level"].ToString());
+                                studentInfo.student.course = sdr["course"].ToString();
+                                studentInfo.student.units_passed = Int32.Parse(sdr["units_passed"].ToString());
+                                studentInfo.student.units_left = Int32.Parse(sdr["units_left"].ToString());                            }
+                        }
+                        con.Close();
+                    }
+                }
+                //Gets Student data - END
+
+                return View(studentInfo);
+            }
+            //Runs if first time loading - END
+        }//StudentEdit - END
+        public IActionResult StudentDelete(string txtStudID)
+        {
+            string constr = this.Configuration.GetConnectionString("DefaultConnection");
+            string sql;
+
+            sql = "DELETE FROM student_info WHERE stud_id='" + txtStudID + "';";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+            }
+
+            return RedirectToAction("AllStudentView", "Admin", new { message = "Student Deleted Successfully" });
+        }
     }
 }

@@ -18,16 +18,6 @@
     <form asp-controller="Admin" asp-action="AllStudentView" method="post">
         <button type="submit" id="all_student_view" name="all_student_view">View Students</button>
     </form>
-    <form asp-controller="Admin" asp-action="StudentInfo" method="post">
-        <label for="term_id">Choose Student</label>
-        <select name="stud_id" id="stud_id">
-            @foreach (Student student in Model.students)
-            {
-                <option value=@student.stud_id>@student.stud_id, @student.name</option>
-            }
-        </select>
-        <button type="submit" id="button" name="button">View Student Information</button>
-    </form>
     <form asp-controller="Admin" asp-action="AdminView" method="post">
         <label for="term_id">Choose Term</label>
         <select name="term_id" id="term_id">

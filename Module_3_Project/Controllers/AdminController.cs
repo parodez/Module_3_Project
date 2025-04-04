@@ -594,5 +594,64 @@ namespace Module_3_Project.Controllers
                 return RedirectToAction("CourseDelete", "Admin", new { stud_id });
             }
         }//StudentDML - END
+        public IActionResult StudentAdd(string txtStudID = "", string txtName = "", string txtAge = "", string txtYearLevel = "", string txtCourse = "", string txtUnitsPassed = "", string txtUnitsLeft = "")
+        {
+            StudentAddModel studentAddInfo = new StudentAddModel();
+            studentAddInfo.student = new Student();
+            studentAddInfo.message = "";
+
+            string constr = this.Configuration.GetConnectionString("DefaultConnection");
+            string sql;
+
+            if (txtStudID != "")
+            {
+                //Check if Student to be addded exists
+                sql = "SELECT * FROM student_info WHERE stud_id='" + txtStudID + "';";
+                using (MySqlConnection con = new MySqlConnection(constr))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                    {
+                        con.Open();
+                        using (MySqlDataReader sdr = cmd.ExecuteReader())
+                        {
+                            if (sdr.HasRows)
+                            {
+                                while (sdr.Read())
+                                {
+                                    studentAddInfo.message = "Course already exists";
+                                    break;
+                                }
+                            }
+                        }
+                        con.Close();
+                    }
+                }
+                //Check if Student to be addded exists - END
+
+                //Runs if Student to be added does not exist
+                if (studentAddInfo.message == "")
+                {
+                    //Add Student to database
+                    sql = "INSERT INTO student_info VALUES ('" + txtStudID + "','password','" + txtName + "','" + txtAge + "','" + txtYearLevel + "','" + txtCourse + "','" + txtUnitsPassed + "','" + txtUnitsLeft + "','0');";
+                    using (MySqlConnection con = new MySqlConnection(constr))
+                    {
+                        using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                        {
+                            con.Open();
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                        }
+                    }
+                    //Add Student to database - END
+
+                    //Go back to Admin Dashboard with transaction feedback
+                    return RedirectToAction("AllStudentView", "Admin", new { message = "Student Added Successfully" });
+                    //Go back to Admin Dashboard with transaction feedback - END
+                }
+                //Runs if Course to be added does not exist - END
+            }
+
+            return View(studentAddInfo);
+        }//StudentADD - END
     }
 }

@@ -18,15 +18,16 @@
     <form asp-controller="Admin" asp-action="AllStudentView" method="post">
         <button type="submit" id="all_student_view" name="all_student_view">View Students</button>
     </form>
-    <form asp-controller="Admin" asp-action="AdminView" method="post">
+    <form asp-controller="Admin" asp-action="TermDML" method="post">
         <label for="term_id">Choose Term</label>
-        <select name="term_id" id="term_id">
+        <select name="txtTermID" id="txtTermID">
             @foreach (Terms terms in Model.terms)
             {
                 <option value=@terms.term_id>@terms.term_id</option>
             }
         </select>
-        <button type="submit" id="submit" name="submit">View Term</button>
+        <button type="submit" id="btn_term_dml" name="btn_term_dml" value="view">View Term</button>
+        <button type="submit" id="btn_term_dml" name="btn_term_dml" value="add">Add Term</button>
     </form>
 
     <br />

@@ -1,0 +1,33 @@
+﻿@{
+	ViewData["Title"] = "Add Term";
+
+}
+<html>
+<head>
+
+</head>
+<body>
+	<h1>Admin Dashboard -> Add Term</h1>
+	<form asp-controller="Admin" asp-action="AdminView" method="post">
+		<button type="submit" name="btnBack">Back</button>
+	</form>
+	<h2>@Model.message</h2>
+
+	<form asp-controller="Admin" asp-action="TermAdd" method="post">
+
+		Academic Year: <input type="text" name="txtTermYear" required />
+
+		<br>
+
+		<br />
+
+		Term: <input type="text" name="txtTerm" required />
+
+		<br>
+
+		<br />
+
+		<button type="submit" name="btnSubmit">Add Course</button>
+	</form>
+</body>
+</html>

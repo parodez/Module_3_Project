@@ -397,7 +397,7 @@ namespace Module_3_Project.Controllers
                     }
                 }
                 //Check if Course to be addded exists - END
-                
+
                 //Runs if Course to be added does not exist
                 if (addCourseInfo.message == "")
                 {
@@ -450,7 +450,7 @@ namespace Module_3_Project.Controllers
                             {
                                 while (sdr.Read())
                                 {
-                                    if (CourseID != sdr["CourseID"].ToString() && 
+                                    if (CourseID != sdr["CourseID"].ToString() &&
                                         (txtCourseCode == sdr["CourseCode"].ToString()) ||
                                         txtCourseName == sdr["CourseName"].ToString())
                                     {
@@ -701,7 +701,8 @@ namespace Module_3_Project.Controllers
                                 studentInfo.student.year_level = Int32.Parse(sdr["year_level"].ToString());
                                 studentInfo.student.course = sdr["course"].ToString();
                                 studentInfo.student.units_passed = Int32.Parse(sdr["units_passed"].ToString());
-                                studentInfo.student.units_left = Int32.Parse(sdr["units_left"].ToString());                            }
+                                studentInfo.student.units_left = Int32.Parse(sdr["units_left"].ToString());
+                            }
                         }
                         con.Close();
                     }
@@ -729,6 +730,78 @@ namespace Module_3_Project.Controllers
             }
 
             return RedirectToAction("AllStudentView", "Admin", new { message = "Student Deleted Successfully" });
-        }
+        }//StudentDelete - END
+        public IActionResult TermDML(string btn_term_dml, string txtTermID)
+        {
+            if (btn_term_dml == "view")
+            {
+                return RedirectToAction("AdminView", "Admin", new { term_id = txtTermID });
+            }
+            else
+            {
+                return RedirectToAction("TermAdd", "Admin");
+            }
+        }//TermDML - END
+        public IActionResult TermAdd(string txtTermYear = "", string txtTerm = "")
+        {
+            TermAddModel termAddInfo = new TermAddModel();
+            termAddInfo.message = "";
+
+            string constr = this.Configuration.GetConnectionString("DefaultConnection");
+            string sql;
+
+            if (txtTermYear != "")
+            {
+                //Check if Course to be addded exists
+                sql = "SELECT * FROM terms;";
+                using (MySqlConnection con = new MySqlConnection(constr))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                    {
+                        con.Open();
+
+                        using (MySqlDataReader sdr = cmd.ExecuteReader())
+                        {
+                            if (sdr.HasRows)
+                            {
+                                while (sdr.Read())
+                                {
+                                    if (sdr["term_id"].ToString() == (txtTermYear + txtTerm))
+                                    {
+                                        termAddInfo.message = "Term already exists";
+                                    }
+                                }
+                            }
+                        }
+                        con.Close();
+                    }
+                }
+                //Check if Course to be addded exists - END
+
+                //Runs if Course to be added does not exist
+                if (termAddInfo.message == "")
+                {
+                    //Add Course to database
+                    sql = "INSERT INTO terms VALUES (NULL,'" + txtTermYear + "','" + txtTerm + "',0);";
+                    using (MySqlConnection con = new MySqlConnection(constr))
+                    {
+                        using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                        {
+                            con.Open();
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                        }
+                    }
+                    //Add Course to database - END
+
+                    //Go back to Admin Dashboard with transaction feedback
+                    return RedirectToAction("AdminView", "Admin", new { message = "Term Added Successfully" });
+                    //Go back to Admin Dashboard with transaction feedback - END
+                }
+                //Runs if Course to be added does not exist - END
+            }
+
+            return View(termAddInfo);
+        }//TermAdd - END
     }
 }

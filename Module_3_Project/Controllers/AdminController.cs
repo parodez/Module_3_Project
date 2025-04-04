@@ -803,5 +803,115 @@ namespace Module_3_Project.Controllers
 
             return View(termAddInfo);
         }//TermAdd - END
+        public IActionResult GradesView(string message = "")
+        {
+            string constr = this.Configuration.GetConnectionString("DefaultConnection");
+            string sql;
+
+            GradesViewModel gradeViewInfo = new GradesViewModel();
+            gradeViewInfo.grades = new List<Grade>();
+            gradeViewInfo.students = new List<Student>();
+            gradeViewInfo.courses = new List<Course>();
+            gradeViewInfo.message = message;
+
+            //Get all Courses
+            sql = "SELECT * FROM grades ORDER BY Term DESC;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                gradeViewInfo.grades.Add(new Grade
+                                {
+                                    GradeID = Int32.Parse(sdr["GradeID"].ToString()),
+                                    StudentID = sdr["StudentID"].ToString(),
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString()),
+                                    Term = Int32.Parse(sdr["Term"].ToString()),
+                                    GradeValue = sdr["GradeValue"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get all Courses - END
+
+            //Get all students
+            sql = "SELECT * FROM student_info;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                gradeViewInfo.students.Add(new Student
+                                {
+                                    stud_id = sdr["stud_id"].ToString(),
+                                    name = sdr["name"].ToString(),
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get all students - END
+
+            //Get all courses
+            sql = "SELECT * FROM courses;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                gradeViewInfo.courses.Add(new Course
+                                {
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString()),
+                                    CourseCode = sdr["CourseCode"].ToString(),
+                                    CourseName = sdr["CourseName"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get all courses - END
+
+            return View(gradeViewInfo);
+        }//GradesView - END
+        public IActionResult GradeDML(string btn_grade_dml, string txtGradeID = "")
+        {
+            if (btn_grade_dml == "add")
+            {
+                return RedirectToAction("GradeAdd", "Admin");
+            }
+            else if (btn_grade_dml == "edit")
+            {
+                return RedirectToAction("CourseEdit", "Admin", new { GradeID = txtGradeID });
+            }
+            else
+            {
+                return RedirectToAction("CourseDelete", "Admin", new { GradeID = txtGradeID });
+            }
+        }
     }
 }

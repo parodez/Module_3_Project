@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Grades Dashboard";
+
+}
+<html>
+<head>
+
+</head>
+<body>
+    <h1>Admin Dashboard -> Grades Dashboard</h1>
+    <form asp-controller="Admin" asp-action="AdminView" method="post">
+        <button type="submit" name="btnBack">Back</button>
+    </form>
+    <h2>@Model.message</h2>
+    <form id="form_grade_add" asp-controller="Admin" asp-action="GradeDML" method="post"></form>
+    <button form="form_grade_add" type="submit" id="btn_grade_dml" name="btn_grade_dml" value="add">Add Grade</button>
+    <form id="form_grade_dml" asp-controller="Admin" asp-action="GradeDML" method="post">
+        <select id="txtGradeID" name="txtGradeID">
+            @foreach (Grade grade in Model.grades)
+            {
+                <option value=@grade.GradeID>@grade.GradeID</option>
+            }
+        </select>
+        <button form="form_grade_dml" type="submit" id="btn_grade_dml" name="btn_grade_dml" value="edit">Edit Grade</button>
+        <button form="form_grade_dml" type="submit" id="btn_grade_dml" name="btn_grade_dml" value="delete">Delete Grade</button>
+    </form>
+
+    <table>
+        <tr>
+            <th>Grade ID</th>
+            <th>Student ID</th>
+            <th>Student Name</th>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Term</th>
+            <th>Grade Value</th>
+        </tr>
+        @foreach (Grade grade in Model.grades)
+        {
+            <tr>
+                <td>@grade.GradeID</td>
+                @foreach (Student student in Model.students)
+                {
+                    @if (student.stud_id == grade.StudentID)
+                    {
+                        <td>@student.stud_id</td>
+                        <td>@student.name</td>
+                        break;
+                    }
+                }
+                @foreach (Course course in Model.courses)
+                {
+                    @if (course.CourseID == grade.CourseID)
+                    {
+                        <td>@course.CourseCode</td>
+                        <td>@course.CourseName</td>
+                        break;
+                    }
+                }
+                <td>@grade.Term</td>
+                <td>@grade.GradeValue</td>
+            </tr>
+        }
+    </table>
+</body>
+</html>

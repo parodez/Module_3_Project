@@ -912,6 +912,324 @@ namespace Module_3_Project.Controllers
             {
                 return RedirectToAction("CourseDelete", "Admin", new { GradeID = txtGradeID });
             }
+        }//GradeDML - END
+        public IActionResult GradeAdd(string txtStudentID = "",string txtCourseID = "", string txtTerm = "", string txtGradeValue = "")
+        {
+            GradeAddModel gradeAddInfo = new GradeAddModel();
+            gradeAddInfo.students = new List<Student>();
+            gradeAddInfo.courses = new List<Course>();
+            gradeAddInfo.terms = new List<Terms>();
+            gradeAddInfo.message = "";
+
+            string constr = this.Configuration.GetConnectionString("DefaultConnection");
+            string sql;
+
+            //Get students
+            sql = "SELECT * FROM student_info;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                gradeAddInfo.students.Add(new Student
+                                {
+                                    stud_id = sdr["stud_id"].ToString(),
+                                    name = sdr["name"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get students - END
+
+            //Get courses
+            sql = "SELECT * FROM courses;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                gradeAddInfo.courses.Add(new Course
+                                {
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString()),
+                                    CourseCode = sdr["CourseCode"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get courses - END
+
+            //Get terms
+            sql = "SELECT * FROM terms;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                gradeAddInfo.terms.Add(new Terms
+                                {
+                                    term_id = sdr["term_id"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get terms - END
+
+            if (txtStudentID != "")
+            {
+                //Add Course to database
+                sql = "INSERT INTO grades VALUES (NULL,'" + txtStudentID + "','" + txtCourseID + "','" + txtTerm + "','" + txtGradeValue + "');";
+                using (MySqlConnection con = new MySqlConnection(constr))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                    {
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
+                //Add Course to database - END
+
+                //Go back to Admin Dashboard with transaction feedback
+                return RedirectToAction("GradesView", "Admin", new { message = "Grade Added Successfully" });
+                //Go back to Admin Dashboard with transaction feedback - END
+            }
+            return View(gradeAddInfo);
+        }//GradeAdd - END
+        public IActionResult EnrollmentView(string message = "")
+        {
+            string constr = this.Configuration.GetConnectionString("DefaultConnection");
+            string sql;
+
+            EnrollmentViewModel enrollmentViewInfo = new EnrollmentViewModel();
+            enrollmentViewInfo.enrollments = new List<Enrolled>();
+            enrollmentViewInfo.students = new List<Student>();
+            enrollmentViewInfo.courses = new List<Course>();
+            enrollmentViewInfo.message = message;
+
+            //Get all enrollments
+            sql = "SELECT * FROM enrollments ORDER BY term_id DESC;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                enrollmentViewInfo.enrollments.Add(new Enrolled
+                                {
+                                    enrollment_id = Int32.Parse(sdr["enrollment_id"].ToString()),
+                                    stud_id = sdr["stud_id"].ToString(),
+                                    term_id = sdr["term_id"].ToString(),
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString())
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get all enrollments - END
+
+            //Get all students
+            sql = "SELECT * FROM student_info;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                enrollmentViewInfo.students.Add(new Student
+                                {
+                                    stud_id = sdr["stud_id"].ToString(),
+                                    name = sdr["name"].ToString(),
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get all students - END
+
+            //Get all courses
+            sql = "SELECT * FROM courses;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                enrollmentViewInfo.courses.Add(new Course
+                                {
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString()),
+                                    CourseCode = sdr["CourseCode"].ToString(),
+                                    CourseName = sdr["CourseName"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get all courses - END
+
+            return View(enrollmentViewInfo);
+        }//EnrollmentView - END
+        public IActionResult EnrollmentAdd(string txtStudID = "", string txtCourseID = "", string txtTerm = "")
+        {
+            EnrollmentViewModel enrollmentAddInfo = new EnrollmentViewModel();
+            enrollmentAddInfo.students = new List<Student>();
+            enrollmentAddInfo.courses = new List<Course>();
+            enrollmentAddInfo.terms = new List<Terms>();
+            enrollmentAddInfo.message = "";
+
+            string constr = this.Configuration.GetConnectionString("DefaultConnection");
+            string sql;
+
+            //Get students
+            sql = "SELECT * FROM student_info;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                enrollmentAddInfo.students.Add(new Student
+                                {
+                                    stud_id = sdr["stud_id"].ToString(),
+                                    name = sdr["name"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get students - END
+
+            //Get courses
+            sql = "SELECT * FROM courses;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                enrollmentAddInfo.courses.Add(new Course
+                                {
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString()),
+                                    CourseCode = sdr["CourseCode"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get courses - END
+
+            //Get terms
+            sql = "SELECT * FROM terms ORDER BY term_id DESC;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                enrollmentAddInfo.terms.Add(new Terms
+                                {
+                                    term_id = sdr["term_id"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            //Get terms - END
+
+            if (txtStudID != "")
+            {
+                //Add Enrollment to database
+                sql = "INSERT INTO enrollments VALUES (NULL,'" + txtTerm + "','" + txtStudID + "','" + txtCourseID + "');";
+                using (MySqlConnection con = new MySqlConnection(constr))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                    {
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
+                //Add Course to database - END
+
+                //Go back to Admin Dashboard with transaction feedback
+                return RedirectToAction("EnrollmentView", "Admin", new { message = "Student Enrolled Successfully" });
+                //Go back to Admin Dashboard with transaction feedback - END
+            }
+            return View(enrollmentAddInfo);
         }
     }
 }

@@ -1,0 +1,54 @@
+﻿@{
+	ViewData["Title"] = "Enroll Student";
+
+}
+<html>
+<head>
+
+</head>
+<body>
+	<h1>Admin Dashboard -> Enroll Student</h1>
+	<form asp-controller="Admin" asp-action="EnrollmentView" method="post">
+		<button type="submit" name="btnBack">Back</button>
+	</form>
+	<h2>@Model.message</h2>
+
+	<form asp-controller="Admin" asp-action="EnrollmentAdd" method="post">
+
+		Student: <select name="txtStudID">
+			@foreach (Student student in Model.students)
+			{
+				<option value=@student.stud_id>@student.stud_id, @student.name</option>
+			}
+		</select>
+
+		<br>
+
+		<br />
+
+		Course: <select name="txtCourseID">
+			@foreach (Course course in Model.courses)
+			{
+				<option value=@course.CourseID>@course.CourseCode</option>
+			}
+		</select>
+
+		<br>
+
+		<br />
+
+		Term: <select name="txtTerm">
+			@foreach (Terms term in Model.terms)
+			{
+				<option value=@term.term_id>@term.term_id</option>
+			}
+		</select>
+
+		<br>
+
+		<br />
+
+		<button type="submit" name="btnSubmit">Add Grade</button>
+	</form>
+</body>
+</html>

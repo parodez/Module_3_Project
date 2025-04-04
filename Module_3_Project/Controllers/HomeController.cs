@@ -129,31 +129,36 @@ namespace Module_3_Project.Controllers
                 Debug.WriteLine(sessionname + " (StudentView)");
             }
 
-            Student student = new Student();
+            StudentView studentView = new StudentView();
+
+            studentView.grades = new List<Grade>();
+            studentView.courses = new List<Course>();
+            studentView.enrollments = new List<Enrolled>();
+            studentView.terms = new List<Terms>();
 
             string constr = this.Configuration.GetConnectionString("DefaultConnection");
             string sql;
 
+            // Fetch Student Personal Info
             sql = "SELECT * FROM student_info WHERE stud_id = '" + stud_id + "';";
             using (MySqlConnection con = new MySqlConnection(constr))
             {
                 using (MySqlCommand cmd = new MySqlCommand(sql, con))
                 {
                     con.Open();
-
                     using (MySqlDataReader sdr = cmd.ExecuteReader())
                     {
                         if (sdr.HasRows)
                         {
                             while (sdr.Read())
                             {
-                                student.stud_id = sdr["stud_id"].ToString();
-                                student.name = sdr["name"].ToString();
-                                student.age = Int32.Parse(sdr["age"].ToString());
-                                student.year_level = Int32.Parse(sdr["year_level"].ToString());
-                                student.course = sdr["course"].ToString();
-                                student.units_passed = Int32.Parse(sdr["units_passed"].ToString());
-                                student.units_left = Int32.Parse(sdr["units_left"].ToString());
+                                studentView.stud_id = sdr["stud_id"].ToString();
+                                studentView.name = sdr["name"].ToString();
+                                studentView.age = Int32.Parse(sdr["age"].ToString());
+                                studentView.year_level = Int32.Parse(sdr["year_level"].ToString());
+                                studentView.course = sdr["course"].ToString();
+                                studentView.units_passed = Int32.Parse(sdr["units_passed"].ToString());
+                                studentView.units_left = Int32.Parse(sdr["units_left"].ToString());
                             }
                         }
                     }
@@ -161,7 +166,62 @@ namespace Module_3_Project.Controllers
                 }
             }
 
-            return View(student);
+            // Fetch All Courses (remains the same)
+            sql = "SELECT * FROM courses;";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                studentView.courses.Add(new Course
+                                {
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString()),
+                                    CourseCode = sdr["CourseCode"].ToString(),
+                                    CourseName = sdr["CourseName"].ToString(),
+                                    UnitsWorth = Int32.Parse(sdr["UnitsWorth"].ToString())
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+
+            // Fetch Student Grades (remains the same)
+            sql = "SELECT * FROM grades WHERE StudentID = '" + stud_id + "';";
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                {
+                    con.Open();
+                    using (MySqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        if (sdr.HasRows)
+                        {
+                            while (sdr.Read())
+                            {
+                                studentView.grades.Add(new Grade
+                                {
+                                    GradeID = Int32.Parse(sdr["GradeID"].ToString()),
+                                    StudentID = sdr["StudentID"].ToString(),
+                                    CourseID = Int32.Parse(sdr["CourseID"].ToString()),
+                                    Term = Int32.Parse(sdr["Term"].ToString()),
+                                    GradeValue = sdr["GradeValue"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+
+            return View(studentView);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
